@@ -28,6 +28,7 @@ import java.util.List;
 public class GameView extends GridLayout{
     private Card[][] cardsMap=new Card[4][4];
     private List<Point> emptyPoint=new ArrayList<Point>();
+    public int[][] matrix=new int[4][4];
     public GameView(Context context) {
         super(context);
         initGameView();
@@ -83,6 +84,7 @@ public class GameView extends GridLayout{
             for(int y=0;y<4;y++){
                 mCard=new Card(getContext());
                 mCard.setNum(0,false);
+                matrix[x][y]=0;
                 cardsMap[x][y]=mCard;
                 addView(mCard,cardWidth,cardHeight);
             }
@@ -97,6 +99,7 @@ public class GameView extends GridLayout{
         for(int x=0;x<4;x++){
             for(int y=0;y<4;y++){
                 cardsMap[x][y].setNum(0,false);
+                matrix[x][y]=0;
             }
         }
         addRandomNum();
@@ -106,20 +109,33 @@ public class GameView extends GridLayout{
         emptyPoint.clear();
         for(int x=0;x<4;x++){
             for(int y=0;y<4;y++){
+                if(matrix[x][y]<=0){
+                    emptyPoint.add(new Point(x,y));
+                }
+                //check win
+                if(matrix[x][y]==2048){
+                    WinDialog dialog=new WinDialog(getContext(),R.style.translationTheme);
+                    dialog.show();
+                    dialog .setCanceledOnTouchOutside(false);
+                }
+            }
+        }
+        if(emptyPoint.size()>0){
+            Point p=emptyPoint.remove((int)(Math.random()*emptyPoint.size()));
+            cardsMap[p.x][p.y].setNum(Math.random()>0.1?2:4,true);
+            matrix[p.x][p.y]= cardsMap[p.x][p.y].getNum();
+            if(emptyPoint.size()==0){
+                checkComplete();
+            }
+        }
+        /*emptyPoint.clear();
+        for(int x=0;x<4;x++){
+            for(int y=0;y<4;y++){
                 if(cardsMap[x][y].getNum()<=0){
                     emptyPoint.add(new Point(x,y));
                 }
                 //check win
                 if(cardsMap[x][y].getNum()==2048){
-                    /*Dialog winDialog=new AlertDialog.Builder(getContext())
-                            .setMessage("You win!")
-                            .setPositiveButton("Restart", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    startGame();
-                                }
-                            }).show();
-                    winDialog.setCanceledOnTouchOutside(false);*/
                     WinDialog dialog=new WinDialog(getContext(),R.style.translationTheme);
                     dialog.show();
                     dialog .setCanceledOnTouchOutside(false);
@@ -132,10 +148,26 @@ public class GameView extends GridLayout{
             if(emptyPoint.size()==0){
                 checkComplete();
             }
-        }
+        }*/
     }
     private void checkComplete(){
         for(int x=0;x<4;x++){
+            for(int y=0;y<4;y++){
+                if(x>1&&matrix[x][y]==matrix[x-1][y]){
+                    return ;
+                }
+                if(x<3&&matrix[x][y]==matrix[x+1][y]){
+                    return ;
+                }
+                if(y>1&&matrix[x][y]==matrix[x][y-1]){
+                    return ;
+                }
+                if(y<3&&matrix[x][y]==matrix[x][y+1]){
+                    return ;
+                }
+            }
+        }
+        /*for(int x=0;x<4;x++){
             for(int y=0;y<4;y++){
                 if(x>1&&cardsMap[x][y].equals(cardsMap[x-1][y])){
                     return ;
@@ -150,7 +182,7 @@ public class GameView extends GridLayout{
                     return ;
                 }
             }
-        }
+        }*/
         LostDialog dialog=new LostDialog(getContext(),R.style.translationTheme);
         dialog.show();
         dialog .setCanceledOnTouchOutside(false);
@@ -164,34 +196,29 @@ public class GameView extends GridLayout{
                 }).show();
         lostDialog.setCanceledOnTouchOutside(false);*/
     }
+
     private void swipeLeft(){
+        for(int i=0;i<4;i++){
+            for(int j=0;j<4;j++){
+                matrix[i][j]=cardsMap[i][j].getNum();
+            }
+        }
         boolean isMerge=false;
         for(int x=0;x<4;x++){
             for(int y=0;y<4;y++){
                 for(int y1=y+1;y1<4;y1++){
-                    if(cardsMap[x][y1].getNum()>0){
-                        //===============================
-                        /*FrameLayout parent=(FrameLayout)getParent();
-                        Card temp=new Card(getContext());
-                        temp.setNum(1024);
-                        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(cardsMap[3][0].getWidth(),cardsMap[3][0].getWidth());
-                        lp.setMargins(cardsMap[3][0].getLeft(),cardsMap[3][0].getTop(),cardsMap[3][0].getRight(),cardsMap[3][0].getBottom());
-                        parent.addView(temp,lp);
-                        ObjectAnimator moveAnimator = ObjectAnimator
-                                .ofFloat(temp, "translationX", 0,cardsMap[3][3].getLeft()-cardsMap[3][0].getLeft())
-                                .setDuration(3000);
-                        moveAnimator.start();*/
-                        //===================================
-                       // Log.i("sad",x+"/"+y+"/"+(cardsMap[x][y1].getLeft()+25)+"/"+(cardsMap[x][y].getLeft()+25));
-                        if(cardsMap[x][y].getNum()<=0){
-                            cardsMap[x][y].setNum(cardsMap[x][y1].getNum(),false);
-                            cardsMap[x][y1].setNum(0,false);
+                    if(matrix[x][y1]>0){
+                        if(matrix[x][y]<=0){
+                            matrix[x][y]=matrix[x][y1];
+                            matrix[x][y1]=0;
+                            moveCard(cardsMap[x][y1],cardsMap[x][y],cardsMap[x][y1].getNum(),"translationX",false);
                             y--;
                             isMerge=true;
-                        }else if(cardsMap[x][y].equals(cardsMap[x][y1])){
-                            cardsMap[x][y].setNum(cardsMap[x][y1].getNum()*2,true);
-                            cardsMap[x][y1].setNum(0,false);
-                            GameActivity.getGameActivity().addScore(cardsMap[x][y].getNum());
+                        }else if(matrix[x][y]==matrix[x][y1]){
+                            matrix[x][y]=matrix[x][y1]*2;
+                            matrix[x][y1]=0;
+                            moveCard(cardsMap[x][y1],cardsMap[x][y],cardsMap[x][y1].getNum()*2,"translationX",true);
+                            GameActivity.getGameActivity().addScore(matrix[x][y]);
                             isMerge=true;
                         }
                         break;
@@ -205,20 +232,27 @@ public class GameView extends GridLayout{
         }
     }
     private void swipeRight(){
+        for(int i=0;i<4;i++){
+            for(int j=0;j<4;j++){
+                matrix[i][j]=cardsMap[i][j].getNum();
+            }
+        }
         boolean isMerge=false;
         for(int x=0;x<4;x++){
             for(int y=3;y>=0;y--){
                 for(int y1=y-1;y1>=0;y1--){
-                    if(cardsMap[x][y1].getNum()>0){
-                        if(cardsMap[x][y].getNum()<=0){
-                            cardsMap[x][y].setNum(cardsMap[x][y1].getNum(),false);
-                            cardsMap[x][y1].setNum(0,false);
+                    if(matrix[x][y1]>0){
+                        if(matrix[x][y]<=0){
+                            matrix[x][y]=matrix[x][y1];
+                            matrix[x][y1]=0;
+                            moveCard(cardsMap[x][y1],cardsMap[x][y],cardsMap[x][y1].getNum(),"translationX",false);
                             y++;
                             isMerge=true;
-                        }else if(cardsMap[x][y].equals(cardsMap[x][y1])){
-                            cardsMap[x][y].setNum(cardsMap[x][y1].getNum()*2,true);
-                            cardsMap[x][y1].setNum(0,false);
-                            GameActivity.getGameActivity().addScore(cardsMap[x][y].getNum());
+                        }else if(matrix[x][y]==matrix[x][y1]){
+                            matrix[x][y]=matrix[x][y1]*2;
+                            matrix[x][y1]=0;
+                            moveCard(cardsMap[x][y1],cardsMap[x][y],cardsMap[x][y1].getNum()*2,"translationX",true);
+                            GameActivity.getGameActivity().addScore(matrix[x][y]);
                             isMerge=true;
                         }
                         break;
@@ -232,20 +266,27 @@ public class GameView extends GridLayout{
         }
     }
     private void swipeUp(){
+        for(int i=0;i<4;i++){
+            for(int j=0;j<4;j++){
+                matrix[i][j]=cardsMap[i][j].getNum();
+            }
+        }
         boolean isMerge=false;
         for(int x=0;x<4;x++){
             for(int y=0;y<4;y++){
                 for(int x1=x+1;x1<4;x1++){
-                    if(cardsMap[x1][y].getNum()>0){
-                        if(cardsMap[x][y].getNum()<=0){
-                            cardsMap[x][y].setNum(cardsMap[x1][y].getNum(),false);
-                            cardsMap[x1][y].setNum(0,false);
+                    if(matrix[x1][y]>0){
+                        if(matrix[x][y]<=0){
+                            matrix[x][y]=matrix[x1][y];
+                            matrix[x1][y]=0;
+                            moveCard(cardsMap[x1][y],cardsMap[x][y],cardsMap[x1][y].getNum(),"translationY",false);
                             y--;
                             isMerge=true;
-                        }else if(cardsMap[x][y].equals(cardsMap[x1][y])){
-                            cardsMap[x][y].setNum(cardsMap[x1][y].getNum()*2,true);
-                            cardsMap[x1][y].setNum(0,false);
-                            GameActivity.getGameActivity().addScore(cardsMap[x][y].getNum());
+                        }else if(matrix[x][y]==matrix[x1][y]){
+                            matrix[x][y]=matrix[x1][y]*2;
+                            matrix[x1][y]=0;
+                            moveCard(cardsMap[x1][y],cardsMap[x][y],cardsMap[x1][y].getNum()*2,"translationY",true);
+                            GameActivity.getGameActivity().addScore(matrix[x][y]);
                             isMerge=true;
                         }
                         break;
@@ -259,20 +300,27 @@ public class GameView extends GridLayout{
         }
     }
     private void swipeDown(){
+        for(int i=0;i<4;i++){
+            for(int j=0;j<4;j++){
+                matrix[i][j]=cardsMap[i][j].getNum();
+            }
+        }
         boolean isMerge=false;
         for(int x=3;x>=0;x--){
             for(int y=0;y<4;y++){
                 for(int x1=x-1;x1>=0;x1--){
-                    if(cardsMap[x1][y].getNum()>0){
-                        if(cardsMap[x][y].getNum()<=0){
-                            cardsMap[x][y].setNum(cardsMap[x1][y].getNum(),false);
-                            cardsMap[x1][y].setNum(0,false);
+                    if(matrix[x1][y]>0){
+                        if(matrix[x][y]<=0){
+                            matrix[x][y]=matrix[x1][y];
+                            matrix[x1][y]=0;
+                            moveCard(cardsMap[x1][y],cardsMap[x][y],cardsMap[x1][y].getNum(),"translationY",false);
                             y--;
                             isMerge=true;
-                        }else if(cardsMap[x][y].equals(cardsMap[x1][y])){
-                            cardsMap[x][y].setNum(cardsMap[x1][y].getNum()*2,true);
-                            cardsMap[x1][y].setNum(0,false);
-                            GameActivity.getGameActivity().addScore(cardsMap[x][y].getNum());
+                        }else if(matrix[x][y]==matrix[x1][y]){
+                            matrix[x][y]=matrix[x1][y]*2;
+                            matrix[x1][y]=0;
+                            moveCard(cardsMap[x1][y],cardsMap[x][y],cardsMap[x1][y].getNum()*2,"translationY",true);
+                            GameActivity.getGameActivity().addScore(matrix[x][y]);
                             isMerge=true;
                         }
                         break;
@@ -284,5 +332,49 @@ public class GameView extends GridLayout{
             addRandomNum();
             addRandomNum();
         }
+    }
+
+    private void moveCard(Card currentCard, final Card targetCard, final int value, String direction, final boolean isAnimate){
+            final FrameLayout parent=(FrameLayout)getParent();
+            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(currentCard.getWidth(),currentCard.getWidth());
+            final Card temp=new Card(getContext());
+            temp.setNum(currentCard.getNum(),false);
+            lp.setMargins(currentCard.getLeft(),currentCard.getTop(),currentCard.getRight(),currentCard.getBottom());
+            parent.addView(temp,lp);
+            currentCard.setNum(0,false);
+            ObjectAnimator moveAnimator;
+            if(direction.equals("translationX")){
+                moveAnimator= ObjectAnimator
+                        .ofFloat(temp, "translationX", 0,targetCard.getLeft()-currentCard.getLeft())
+                        .setDuration(50);
+            }else{
+                moveAnimator = ObjectAnimator
+                        .ofFloat(temp, "translationY", 0,targetCard.getTop()-currentCard.getTop())
+                        .setDuration(50);
+            }
+            moveAnimator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    targetCard.setNum(value,isAnimate);
+                    parent.removeView(temp);
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    targetCard.setNum(value,isAnimate);
+                    parent.removeView(temp);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+            moveAnimator.start();
     }
 }

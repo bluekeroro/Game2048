@@ -126,13 +126,16 @@
             android:text="@string/title2"/>
 
     </RelativeLayout>
-    <com.bluekeroro.android.game2048.GameView
-        android:id="@+id/gameView"
-        android:background="@drawable/corner_view"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="25px"/>
-
+        android:layout_height="wrap_content">
+        <com.bluekeroro.android.game2048.GameView
+            android:id="@+id/gameView"
+            android:background="@drawable/corner_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="25px"/>
+    </FrameLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

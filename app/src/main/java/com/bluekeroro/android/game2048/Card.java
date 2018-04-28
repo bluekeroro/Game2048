@@ -42,10 +42,11 @@ public class Card extends FrameLayout {
         return num;
     }
     private void showCard(TextView label){
+        ObjectAnimator animator = ObjectAnimator.ofFloat(label, "scaleX", 0,0).setDuration(40);
         ObjectAnimator animator1 = ObjectAnimator.ofFloat(label, "scaleX", 0.7f,1.1f,1).setDuration(90);
         ObjectAnimator animator2 = ObjectAnimator.ofFloat(label, "scaleY", 0.7f,1.1f,1).setDuration(90);
         AnimatorSet animatorSet=new AnimatorSet();
-        animatorSet.play(animator1).with(animator2);
+        animatorSet.play(animator1).with(animator2).after(animator);
         animatorSet.start();
     }
     //平移不需要animate，突然出现才需要animate
