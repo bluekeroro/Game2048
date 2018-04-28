@@ -111,7 +111,7 @@ public class GameView extends GridLayout{
                 }
                 //check win
                 if(cardsMap[x][y].getNum()==2048){
-                    Dialog winDialog=new AlertDialog.Builder(getContext())
+                    /*Dialog winDialog=new AlertDialog.Builder(getContext())
                             .setMessage("You win!")
                             .setPositiveButton("Restart", new DialogInterface.OnClickListener() {
                                 @Override
@@ -119,7 +119,10 @@ public class GameView extends GridLayout{
                                     startGame();
                                 }
                             }).show();
-                    winDialog.setCanceledOnTouchOutside(false);
+                    winDialog.setCanceledOnTouchOutside(false);*/
+                    WinDialog dialog=new WinDialog(getContext(),R.style.translationTheme);
+                    dialog.show();
+                    dialog .setCanceledOnTouchOutside(false);
                 }
             }
         }
@@ -148,7 +151,10 @@ public class GameView extends GridLayout{
                 }
             }
         }
-        Dialog lostDialog=new AlertDialog.Builder(getContext())
+        LostDialog dialog=new LostDialog(getContext(),R.style.translationTheme);
+        dialog.show();
+        dialog .setCanceledOnTouchOutside(false);
+        /*Dialog lostDialog=new AlertDialog.Builder(getContext())
                 .setMessage("Game over!")
                 .setPositiveButton("Try again", new DialogInterface.OnClickListener() {
                     @Override
@@ -156,7 +162,7 @@ public class GameView extends GridLayout{
                         startGame();
                     }
                 }).show();
-        lostDialog.setCanceledOnTouchOutside(false);
+        lostDialog.setCanceledOnTouchOutside(false);*/
     }
     private void swipeLeft(){
         boolean isMerge=false;

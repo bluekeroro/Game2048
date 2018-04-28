@@ -25,7 +25,7 @@ public class GameActivity extends AppCompatActivity {
     private TextView mScore;
     private int score=0;
     private Button mButton;
-    private GameView mGameView;
+    public GameView mGameView;
     private static GameActivity sGameActivity=null;
     private TextView mRule;
     private boolean isGetWidth;
