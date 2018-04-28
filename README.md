@@ -6,4 +6,8 @@
 * The application is as far as possible to copy the style from prototype game (http://2048game.com/).
 * Used ObjectAnimator class and AnimatorSet class to add animation.
 * Used Shared Preferences to Store the best score.
-# ScreenShow
+# ScreenShot
+* Prototype
+![image](https://user-images.githubusercontent.com/25412051/39395787-89c09648-4b15-11e8-8994-86908d36d086.JPG)
+* My application
+![image](https://user-images.githubusercontent.com/25412051/39395788-8aea2fde-4b15-11e8-8d04-e85f879ec545.JPG)
