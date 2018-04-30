@@ -30,7 +30,7 @@ public class Card extends FrameLayout {
         label.setBackground(getResources().getDrawable(R.drawable.corner_view));
         mBackground.setBackground(getResources().getDrawable(R.drawable.corner_view));
         GradientDrawable myGrad=(GradientDrawable)label.getBackground();
-        myGrad.setColor(Color.argb(89,238, 228, 218));
+        myGrad.setColor(0xffcdc1b4);
         LayoutParams lp = new LayoutParams(-1, -1);
         lp.setMargins(25,25,0,0);
         addView(mBackground, lp);
@@ -63,7 +63,7 @@ public class Card extends FrameLayout {
         GradientDrawable myGrad=(GradientDrawable)label.getBackground();
         switch(label.getText().toString()){
             case "":
-                myGrad.setColor(Color.argb(89,238, 228, 218));
+                myGrad.setColor(0xffcdc1b4);
                 break;
             case "2":
                 label.setTextColor(0xff776e65);
@@ -102,10 +102,12 @@ public class Card extends FrameLayout {
                 myGrad.setColor(0xffedc850);
                 break;
             case "1024":
+                label.setTextSize(30);
                 label.setTextColor(0xfff9f6f2);
                 myGrad.setColor(0xffedc53f);
                 break;
             case "2048":
+                label.setTextSize(30);
                 label.setTextColor(0xfff9f6f2);
                 myGrad.setColor(0xffedc22e);
                 break;

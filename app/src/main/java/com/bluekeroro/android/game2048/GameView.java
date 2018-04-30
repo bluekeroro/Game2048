@@ -91,7 +91,6 @@ public class GameView extends GridLayout{
         }
         //Toast.makeText(getContext(), "addCards"+cardWidth+"/"+cardHeight+"/count="+cardsMap.length, Toast.LENGTH_SHORT).show();
     }
-
     public void startGame(){
         if(GameActivity.getGameActivity()!=null){
             GameActivity.getGameActivity().clearScore();
